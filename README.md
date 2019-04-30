@@ -1,5 +1,4 @@
-# JK vue 仿饿了么练习
-## 使用库 vue@^2.6.10   vue lci 3.7
+# proname
 
 ## Project setup
 ```
