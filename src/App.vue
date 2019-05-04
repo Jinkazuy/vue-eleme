@@ -1,25 +1,25 @@
 <template>
+  <!--特别要注意的是，template下只能有一个最外层元素-->
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
+    <myHeader></myHeader>
+    <myTab></myTab>
   </div>
 </template>
-<style lang="stylus">
-#app
-  font-family 'Avenir', Helvetica, Arial, sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
-  text-align center
-  color #2c3e50
 
-#nav
-  padding 30px
-  a
-    font-weight bold
-    color #2c3e50
-    &.router-link-exact-active
-      color #42b983
-</style>
+<script>
+// 引入header组件
+// 注意：这里用的myHeader标签是因为：如果使用header的话，就和html原生标签header重名了，会报错;
+import myHeader from "./components/header/header.vue";
+
+// 引入bar组件
+import myTab from "./components/tab/tab.vue";
+
+export default {
+  components: {
+    myHeader, // 挂载header组件到aap.vue；
+    myTab // 挂载bar组件到aap.vue；
+  }
+};
+</script>
+
+<style lang="stylus" rel="stylesheet/stylus"></style>

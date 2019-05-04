@@ -1,0 +1,31 @@
+border-1px($color)
+  position: relative
+  &::after
+    display: block
+    position: absolute
+    width: 100%
+    left: 0
+    bottom: 0
+    border-top: 1px solid $color
+    content: ''
+
+// 这里作为练习，用before实现上边框1px
+// 想要实现的话，也需要在元素的类名加base.styl中关于媒体查询的类名；
+//borderT-1px($color)
+//  &::before
+//    display: block
+//    position: absolute
+//    width: 100%
+//    left: 0
+//    top: 0 // 这里是top，不是bottom；
+//    border-top: 1px solid $color
+//    content: ''
+
+// 获取背景图并且根据倍率进行缩放；
+bgImg($url)
+  background-image: url($url+"@2x.png"); // image只能写路径；
+  background-repeat: no-repeat; //不平铺需要单独写；
+  @media (-webkit-min-device-pixel-ratio: 3),(t-min-device-pixel-ratio: 3)
+    background-image: url($url+"@3x.png");
+    background-repeat: no-repeat;
+

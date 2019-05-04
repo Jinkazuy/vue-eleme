@@ -1,0 +1,36 @@
+// 在375的1.5倍 设备尺寸下；
+@media (-webkit-min-device-pixel-ratio: 1.5),(t-min-device-pixel-ratio: 1.5)
+  // 这里是规定：在1.5倍（375*1.5）的屏幕下，引用了.border-1px的元素 下的after的伪类，进行y轴缩放0.7倍；
+  .border-1px
+    &::after
+      -webkit-transform scaleY(0.7)
+      transform scaleY(0.7)
+
+// 在375的2倍(iphone 6) 设备尺寸下；
+@media (-webkit-min-device-pixel-ratio: 2),(t-min-device-pixel-ratio: 2)
+  .border-1px
+    &::after
+      -webkit-transform scaleY(0.5)
+      transform scaleY(0.5)
+
+// 在375的2倍(iphone 6p) 设备尺寸下；
+@media (-webkit-min-device-pixel-ratio: 3),(t-min-device-pixel-ratio: 3)
+  .border-1px
+    &::after
+      -webkit-transform scaleY(0.29999)
+      transform scaleY(0.29999)
+
+  // 如果需要其他的媒体查询的话，也可以使用下边的方法，但是webpack打包时好像已经做好了px单位在不同分辨率下的适配；
+  // 所以，上边才要用反适配的方法，在任何尺寸下，都显示1px；
+  // 当然这里的媒体查询是对html字号，也就是rem单位的查询，跟上边的1px下边框没关系；
+  // @media screen and(min-width: 320px)and(max-width: 375px){
+  // html{
+  // font-size: 100px;
+  // }
+
+// 初始化的一些样式；
+html,body{
+  font-weight: 200;
+  line-height: 1;
+  font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
+}
