@@ -1,0 +1,14 @@
+cnpm i
+安装node_modules里的依赖文件
+
+模拟数据接口 路由：
+cli 2.x 的初始化项目build文件夹在cli 3.x被合并到了node_modules\webpack-dev-server\lib的Server.js
+因为vue cli 3.x升级的缘故，2.x的一些配置文件都移动或者合并了，根目录下页没有config和build文件夹了；
+所以在2.x的 webpack.dev.conf.js 等文件都去node_modules里去找；
+
+
+根目录\node_modules\webpack-dev-server\lib的Server.js
+以防万一 node_modules 忘记修改哪里，所以将这个文件保存到这里，直接替换到该文件夹下即可
+文件在云笔记 项目练习03需求分析、准备
+
+
