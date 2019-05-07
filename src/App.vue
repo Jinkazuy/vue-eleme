@@ -18,6 +18,9 @@ export default {
   components: {
     myHeader, // 挂载header组件到aap.vue；
     myTab // 挂载bar组件到aap.vue；
+  },
+  created(){
+      this.$store.commit("getUserCart");
   }
 };
 </script>

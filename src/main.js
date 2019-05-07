@@ -25,6 +25,8 @@ Vue.config.productionTip = false;
 
 new Vue({
   router,
+  // 这个store就是用vue cli初始化是已经就配置好的VUEX，用来管理全局数据；
+  // 并且这个store文件已经在app.vue同级的有了；
   store,
   render: h => h(App)
 }).$mount("#app");
