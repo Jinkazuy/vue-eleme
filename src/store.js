@@ -134,6 +134,21 @@ export default new Vuex.Store({
                     // 没有找到商品，啥也不用做，因为不可能进入到这里；
                 }
             }
+        },
+        // 清空某个商家的购物车
+        clearSellerCart(state, clearSellerName) {
+            // 点击清空按钮时，将全局数据下，该商家所有商品清空，并且同步到数据库
+            // 购物车的清空按钮，点击时，调用这个方法，将商家名称传进来，然后进行遍历，
+            for(var i = 0; i< state.cartAll.length ; i++){
+                // 找到与商家名称相同的数据，直接将整个商家及购物车的数据全部移除；
+                if(state.cartAll[i].seller === clearSellerName){
+                    console.log(state.cartAll[i]);
+                    state.cartAll.splice(i,1);
+                    // 同步数据库
+                    localStorage.setItem('UserCart', JSON.stringify(state.cartAll));
+                    return;
+                }
+            }
         }
     },
 
