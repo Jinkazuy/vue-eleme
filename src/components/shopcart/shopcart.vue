@@ -132,6 +132,27 @@
         created() {
             this.shopCartGetSellerInfo();
 
+            // this.$nextTick 用法；
+            // this.$nextTick 用法；
+            // this.$nextTick 用法；
+            // JK：如果想在created()钩子时，获取DOM元素，那么肯定获取不到，但是可是通过$nextTick拿到；
+
+            // 虽然 Vue.js 通常鼓励开发人员沿着“数据驱动”的方式思考，避免直接接触 DOM，但是有时我们确实要这么做。
+            // 比如你在Vue生命周期的created()钩子函数进行的DOM操作一定要放在Vue.nextTick()的回调函数中。
+            // 原因是什么呢，原因是在created()钩子函数执行的时候DOM 其实并未进行任何渲染，而此时进行DOM操作无异于徒劳，
+            // 所以此处一定要将DOM操作的js代码放进Vue.nextTick()的回调函数中。
+            // 在数据变化后要执行的某个操作，而这个操作需要使用随数据改变而改变的DOM结构的时候，
+            // 这个操作都应该放进Vue.nextTick()的回调函数中。
+
+            // $nextTick还有其他用法，具体的看 https://www.jianshu.com/p/a7550c0e164f 或者去百度；
+
+
+            console.log(this.$refs.carcontbgblur) // 结果: undefined
+
+            this.$nextTick(() =>  {
+                console.log(this.$refs.carcontbgblur) //结果:就有了；
+            })
+
         },
         mounted() { // 生命周期函数，在DOM树生成后执行；
             // 调用初始化滚动插件的函数；
