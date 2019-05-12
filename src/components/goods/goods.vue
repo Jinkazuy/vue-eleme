@@ -1,234 +1,300 @@
 <template>
-    <!--特别要注意的是，template下只能有一个最外层元素-->
-    <div id="goods">
-        <!--使用了better-scroll滚动插件，这个元素下的第一个原生可以实现滚动效果，需要在js中初始化这个插件-->
-        <!--初始化插件不要在created生命周期钩子中，因为此时还没有生成DOM，应该在mounted()生命周期钩子函数中执行初始化-->
-        <div class="better-scroll-wrapper better-scroll-wrapper-left">
-            <div class="menu-wrapper">
-                <ul class="foodslist">
-                    <!--for循环必须有key，这里先不加-->
-                    <!--点击时候调用定义好的函数，并且点击的li的元素的item传入这个函数中-->
-                    <!--左侧列表的高亮，由右边列表的高度值，通过计算后的结果来决定-->
-                    <!--点击左侧列表，注册一个点击事件，比并且把该项的索引传到 处理点击事件的函数中-->
-                    <li v-for="(item, i) in foodsListMenu" @click="foodslistNow(i)"
-                        :class="{'current':i===ScrollIndexNowIndex,'currentprevious':i===ScrollIndexNowIndex-1}">
-                        <div class="border-1px">
-                            <div>
-                                <!--因为不是每个类别都有优惠的icon，所以要判断-->
-                                <i v-if="item.type>0?1:0" :class="['goodsSupportsIcon'+item.type]"></i><span>{{ item.name }}</span>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
+  <!--特别要注意的是，template下只能有一个最外层元素-->
+  <div id="goods">
+    <!--使用了better-scroll滚动插件，这个元素下的第一个原生可以实现滚动效果，需要在js中初始化这个插件-->
+    <!--初始化插件不要在created生命周期钩子中，因为此时还没有生成DOM，应该在mounted()生命周期钩子函数中执行初始化-->
+    <div class="better-scroll-wrapper better-scroll-wrapper-left">
+      <div class="menu-wrapper">
+        <ul class="foodslist">
+          <!--for循环必须有key，这里先不加-->
+          <!--点击时候调用定义好的函数，并且点击的li的元素的item传入这个函数中-->
+          <!--左侧列表的高亮，由右边列表的高度值，通过计算后的结果来决定-->
+          <!--点击左侧列表，注册一个点击事件，比并且把该项的索引传到 处理点击事件的函数中-->
+          <li
+            v-for="(item, i) in foodsListMenu"
+            @click="foodslistNow(i)"
+            :class="{
+              current: i === ScrollIndexNowIndex,
+              currentprevious: i === ScrollIndexNowIndex - 1
+            }"
+          >
+            <div class="border-1px">
+              <div>
+                <!--因为不是每个类别都有优惠的icon，所以要判断-->
+                <i
+                  v-if="item.type > 0 ? 1 : 0"
+                  :class="['goodsSupportsIcon' + item.type]"
+                ></i
+                ><span>{{ item.name }}</span>
+              </div>
             </div>
-        </div>
-        <!--右侧商品列表也使用了better-scroll滚动插件-->
-        <div class="better-scroll-wrapper better-scroll-wrapper-right">
-            <div class="cont-wrapper" ref="contwrapper">
-                <ul>
-                    <!-- 这里要实现左右联动的效果，就要计算右侧的每个分类的高度，然后当每个元素滚动到xx像素的时候，左侧分类名的滚动条的某一项高亮 -->
-                    <!-- -hook 是一种编程习惯性命名，代表该元素要被JS获取DOM，而这个类名并没有css样式-->
-                    <li v-for="item in foodsListMenu" class="food-link-hook" @click="">
-                        <h2>{{item.name}}</h2>
-                        <div class="clearfix" v-for="(oneGoods,index) in item.foods">
-                            <img :src="oneGoods.image" alt="图片"/>
-                            <ul class="goodsInfoLise">
-                                <li class="foodName">{{oneGoods.name}}</li>
-                                <!--因为有的商品是没有小标签的，所以之类要判断一下-->
-                                <li class="classification" v-if="oneGoods.description">{{oneGoods.description}}</li>
-                                <li class="salesVolume"><span>月售{{oneGoods.sellCount}}</span><span>好评率{{oneGoods.rating}}%</span>
-                                </li>
-                                <li class="price"><span class="priceNow">￥<i>{{oneGoods.price}}</i></span>
-                                    <span class="priceInvalid" v-if="oneGoods.oldPrice">￥{{oneGoods.oldPrice}}</span>
-                                </li>
-                            </ul>
-                            <!--加减号组件，需要将商品信息传进去,商家名称也要传进去-->
-                            <!--实现小球动画，传给加号一个方法，让加号调用时将加号DOM传给父级goods组件-->
-                            <addgoods :thisgoodsinfo="oneGoods" :sellername="sellerName" @getAddDom="getAddDom"></addgoods>
-                            <!--这个线，该类商品下的最后一个商品的区块不能有，所以这里用商品数组的长度来判断即可-->
-                            <div class="line border-1px" v-if="index<item.foods.length-1"></div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!--调用底部购物车bar组件，并且把商家的起送费、配送费传进去-->
-        <shopcart :startFreight="1" :freight="1" ref="ShopVM"></shopcart>
+          </li>
+        </ul>
+      </div>
     </div>
+    <!--右侧商品列表也使用了better-scroll滚动插件-->
+    <div class="better-scroll-wrapper better-scroll-wrapper-right">
+      <div class="cont-wrapper" ref="contwrapper">
+        <ul>
+          <!-- 这里要实现左右联动的效果，就要计算右侧的每个分类的高度，然后当每个元素滚动到xx像素的时候，左侧分类名的滚动条的某一项高亮 -->
+          <!-- -hook 是一种编程习惯性命名，代表该元素要被JS获取DOM，而这个类名并没有css样式-->
+          <li v-for="item in foodsListMenu" class="food-link-hook">
+            <!--分类标题-->
+            <h2>{{ item.name }}</h2>
+            <!--点击展示 商品详情页-->
+            <!--因为点击商品时弹出商品详情，所以要给加减号加上.stop，防止冒泡-->
+            <!--点击商品时，将商品数据传给这个方法，由这个方法赋值给一个VM变量，然后商品详情页通过这个变量，拿到商品数据-->
+            <!--但这个li循环的时全部商品，item得到的是某个商品的分类，其中包含多个商品-->
+            <!--所以点击showGoodsInfo的时候，应该去拿到oneGoods-->
+            <div
+              class="clearfix"
+              v-for="(oneGoods, index) in item.foods"
+              @click="showGoodsInfo(oneGoods)"
+            >
+              <img :src="oneGoods.image" alt="图片" />
+              <ul class="goodsInfoLise">
+                <li class="foodName">{{ oneGoods.name }}</li>
+                <!--因为有的商品是没有小标签的，所以之类要判断一下-->
+                <li class="classification" v-if="oneGoods.description">
+                  {{ oneGoods.description }}
+                </li>
+                <li class="salesVolume">
+                  <span>月售{{ oneGoods.sellCount }}</span
+                  ><span>好评率{{ oneGoods.rating }}%</span>
+                </li>
+                <li class="price">
+                  <span class="priceNow"
+                    >￥<i>{{ oneGoods.price }}</i></span
+                  >
+                  <span class="priceInvalid" v-if="oneGoods.oldPrice"
+                    >￥{{ oneGoods.oldPrice }}</span
+                  >
+                </li>
+              </ul>
+              <!--加减号组件，需要将商品信息传进去,商家名称也要传进去-->
+              <!--实现小球动画，传给加号一个方法，让加号调用时将加号DOM传给父级goods组件-->
+              <!--也要把该商家的购物车数据穿进去-->
+              <addgoods
+                :thisgoodsinfo="oneGoods"
+                :sellername="sellerInfo.name"
+                @getAddDom="getAddDom"
+                :getSellerCart="getSellerCart"
+              ></addgoods>
+              <!--这个线，该类商品下的最后一个商品的区块不能有，所以这里用商品数组的长度来判断即可-->
+              <div
+                class="line border-1px"
+                v-if="index < item.foods.length - 1"
+              ></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!--调用底部购物车bar组件，并且把商家的起送费、配送费传进去-->
+    <shopcart :startFreight="1" :freight="1" ref="ShopVM" :getSellerCart="getSellerCart"></shopcart>
+    <!--这里调用商品详情页，布局使用fixed，并且z-index不能高于购物车组件-->
+    <!--当然，还是需要用transition标签包裹，实现缓动效果-->
+    <!--把商家名称 和 该商品信息穿进去-->
+    <!--还要把处理加号dom的函数传给这个详情页，然后详情页获取加号dom后，再调用这个父级的getAddDom，把加号DOM传给父级，就等于是一个中间传递的方法-->
+
+    <transition name="goodsinfo">
+      <goodsinfo
+        v-show="goodsInfoShow"
+        :goodsInfoCurrentGoods="currentGoodsInfo"
+        :goodsInfoSellerName="sellerInfo.name"
+        @getAddDom="getAddDom"
+        :getSellerCart="getSellerCart"
+      ></goodsinfo>
+    </transition>
+  </div>
 </template>
 
 <script>
-    // 引入 better-scroll 这个用于处理滚动的插件，但记得先安装：npm install better-scroll --save
-    import BScroll from 'better-scroll';
-    // 引入 +— 号组件；
-    import addgoods from '../addgoods/addgoods'
-    // 引入购物车组件
-    import shopcart from '../shopcart/shopcart'
+// 引入 better-scroll 这个用于处理滚动的插件，但记得先安装：npm install better-scroll --save
+import BScroll from "better-scroll";
+// 引入 +— 号组件；
+import addgoods from "../addgoods/addgoods";
+// 引入购物车组件
+import shopcart from "../shopcart/shopcart";
+// 引入商品详情页
+import goodsinfo from "../goodsinfo/goodsinfo";
 
-    const ERR_OK = true;
-    export default {
-        name: "goods.vue",
-        data() {
-            return {
-                //商家信息,这里为了省事，在这个文件中发送AJAX获取商家信息，其实是因该在APP.vue里请求商家信息的；
-                sellerName: "",
-                // 存放ajax获取到的商家数据
-                goodsInfo: [],
-                // 存放商品种类列表，如果直接在每个li里循环的话，会报错（但是结果是对的）；
-                foodsListMenu: [],
-                // 存放右侧商品列表的每个分类名及该分类下所有商品的容器的高度；
-                goodsListHeight: [],
-                // 用于监听右侧列表滚动的  当前高度
-                scrollHeight: 0,
-                // 用于接收计算后，每个区块的滚动的累计高度；
-                scrollHeightNow: 0,
-                ScrollIndexNowIndex: 0,
-
-            };
-        },
-        created() {
-            // 通过ajax拿到数据，因为此时与这个组件相关的组件都没有拿到数据，所以由这个组件自己拿数据；
-            this.getgoodsData();
-        },
-        mounted() { // 生命周期函数，在DOM树生成后执行；
-            // 调用初始化滚动插件的函数；
-            this.scrollInit();
-        },
-        updated() { // 生命周期函数，实例更新完毕之后调用此函数，此时 data 中的状态值 和 界面上显示的数据，都已经完成了更新，界面已经被重新渲染好了！
-            // 此时的页面已经渲染完毕，这时候才能拿到DOM元素，进行操作；
-            // 调用获取右侧 每个 商品分类及该类商品的高度的函数；
-            this.getGoodsListHeight();
-
-            this.getRightScrollPosition();
-        },
-        computed: {
-            // 监听计算属性，当这个函数下的某个数据发生变化，则会重新计算、执行这个函数；
-            // 用return的方式返回值；
-
-            // 这里就用来做右侧滚动栏，数值变化时；
-            // 注意！！！！computed 是接收返回值！！！！！
-            "WatchScrollIndex": function () {
-                // 这里通过循环计算，
-
-                for (var k = 0; k < this.goodsListHeight.length; k++) {
-                    // 这里是用当前循环的每个分类块的高度相加，如果下边的if没有成了，说明已经滚动的值不够高；
-                    // 一开始这个值就是第1个区块的高度；
-                    // 如果没有进入if，则会一直加下一个分类块的高度；
-                    this.scrollHeightNow += this.goodsListHeight[k];
-                    // 如果，当前滚动的高度，是否大于第1个分类块的高度 且 小于第2个分类块+第1个块的高度，那么此时就应该让第2个分类块的左侧栏对应的按钮高亮；
-                    if (this.scrollHeightNow > this.scrollHeight) {
-                        this.scrollHeightNow = 0;
-                        return k;
-                    }
-                }
-
-                return 0;
-            }
-        },
-        methods: {
-            getgoodsData() {
-                // 因为在main.js中已经引入了vue-resource 所以这里可以直接使用this.$http的方法；
-                this.$http.get("/api/goods").then(goodsResult => {
-                    // 判断是否拿到了数据；
-                    // 虽然请求成功了，但不一定拿到了数据；
-                    if (goodsResult.ok === ERR_OK) {
-                        // console.log(goodsResult);
-                        this.goodsInfo = goodsResult;
-                        this.foodsListMenu = this.goodsInfo.body.data;
-                    }
-                });
-                // 这里获取商家信息，和很多地方重复了，JK为了省事才这样做的，其实应该在APP.vue中做商家信息的AJAX请求
-                this.$http.get("/api/seller").then(sellerResult => {
-                    if (sellerResult.ok === ERR_OK) {
-                        this.sellerName = sellerResult.body.data.name;
-                    }
-                });
-            },
-            // 处理左侧分类项列表的 点击事件，获取传进来每个分类对应的索引值；
-            foodslistNow(index) {
-
-                // 方法1：
-                //此时拿到了被点击的分类项的索引值，那么就可以用这个索引值，用作右侧列表高度的数组循环相加；
-                // 每次被点击的时候都将这个暂存自定为0；
-                var numHeight = 0;
-                for (var i = 0; i < index; i++) {
-                    numHeight += this.goodsListHeight[i]
-                }
-                // 滚动到指定位置的API，参数：x位置, y位置 , 时间, 曲线；
-                this.scrollRight.scrollTo(0, -numHeight, 400);
-                // 这里就先不用方法2，因为还要获取DOM元素，获取每个分类项，可能会增加内存计算，所以直接用方法1，操作右侧整个列表的滚动位置即可；
-
-                // 方法2：
-                // 也可以用另一个API，就是将滚动定为到某个一元素的位置；
-                // 首先获取当右侧列表的每个分类项，得到的还是HTMLCollection的对象;
-                // let foodsListNow = this.$refs.contwrapper.getElementsByClassName('food-link-hook');
-                // this.scrollRight.scrollToElement(foodsListNow[i], 400);
-
-            },
-            scrollInit() {
-                // 初始化滚动插件；
-                // 在methods中初始化了之后，别忘了在mounted中调用这个初始化函数；
-                let wrapperLeft = document.querySelector('.better-scroll-wrapper-left');
-                let wrapperRight = document.querySelector('.better-scroll-wrapper-right');
-                // better-scroll的实例对象，提供一个API，能够实时监听这个组件的滚动位置,创建实例的时候，后边传入probeType: 3;
-                // 然后这个实例化对象，就能监听滚动事件，其中的xx就能拿到实时滚动的位置了；
-                // 左侧列表因为需要点击，但是better-scroll会默认禁止点击事件，那么在配置的时候加上click:true即可；
-                this.scrollLeft = new BScroll(wrapperLeft, {click: true});
-                this.scrollRight = new BScroll(wrapperRight, {probeType: 3, click: true});
-            },
-            getGoodsListHeight() {
-                // $els类似于document.querySelector('.class')的功能,可以拿到指定的dom元素。
-                let foodsList = this.$refs.contwrapper.getElementsByClassName('food-link-hook');
-                // 此时拿到的是一个HTMLCollection的对象，类似数组，但是用[]方法拿不到元素；
-                // 而且这个HTMLCollection对象是事实变化的，所以只能通过updated这个生命周期函数拿到这个元素；
-                // 这个对象下有个.item能够拿到每个元素；
-                for (var i = 0; i < foodsList.length; i++) {
-                    // 此时只能通过每个DOM元素下的clientHeight方法拿到这个元素的实际高度；
-                    // console.dir(foodsList.item(i).clientHeight)
-                    // 让后将每个分类项的高度赋值给定义好的数组中；
-                    this.goodsListHeight.push(foodsList.item(i).clientHeight);
-                }
-            },
-            // 封装一个使用 better-scroll 插件的实例对象来获取该滚动元素实时位置的函数
-            getRightScrollPosition() {
-                this.scrollRight.on('scroll', (pos) => {
-                    // 在初始化 better-scroll 实例时传入{probeType: 3;}，
-                    // 然后这个函数的实例对象监听滚动事件，回调函数的第一个参数，拿到的就是该元素滚动的实时位置；
-                    // console.log(pos)
-
-                    // 然后将这个实时滚动位置赋值给data下定义好的用于接收的变量,用abs转成绝对值，也就是正数；
-                    this.scrollHeight = Math.abs(pos.y);
-                    // 然后就可以用按到的每个分类的高度做对比，就能知道每个分类的块，滚动时，有没有超过显示区域了；
-                    // 比如：↓↓↓
-                    // this.goodsListHeight[0] 这是已经拿到的第一个分类‘热销榜’以及该分类下的商品的所有合起来的高度；
-                    // if(this.scrollHeight > this.goodsListHeight[0]){
-                    //     // 能够进入这个if，说明滚动位置还没有超过这个分类块的高度，那么此时就应该将这个区块对应的左侧的分类块高亮起来；
-                    // }
-
-                    // 因为涉及到了属性的计算，所以，就用到了VUE的计算属性：computed
-                    // 注意，是接收返回值，所以结算结果是computed左边的'变量名'；
-
-                    // 这里重新赋值给另外一个变量，因为JK在引用computed中的某个返回值的变量时，就会卡死；
-                    // 所以只能讲 computed下的WatchScrollIndex接收到的返回值，再赋值给另外一个变量，然后用于和左侧列表的索引对对比，从而产生形成高亮；
-                    this.ScrollIndexNowIndex = this.WatchScrollIndex;
-                });
-            },
-            // 获取减号DOM，将这个函数传给加减号子组件，然后加减号调用时把DOM元素当做参数
-            getAddDom(el){
-                // 当点击加号的时候，此时获取了el，也就是加号的元素
-                // 然后再嗲用子组件的方法，将加号DOM传给子组件，
-                // 此时，购物车子组件获取到了加号按钮DOM
-                // 利用this.$ref.xx也能够拿到组件，和获取DOM一样
-                this.$refs.ShopVM.showBall(el)
-            }
-        },
-        components: {
-            // 挂载购物车组件；
-            shopcart,
-            // 挂载加减号组件；
-            addgoods
-        }
+const ERR_OK = true;
+export default {
+  name: "goods.vue",
+  data() {
+    return {
+      // 存放商品种类列表，如果直接在每个li里循环的话，会报错（但是结果是对的）；
+      foodsListMenu: [],
+      // 存放右侧商品列表的每个分类名及该分类下所有商品的容器的高度；
+      goodsListHeight: [],
+      // 用于监听右侧列表滚动的  当前高度
+      scrollHeight: 0,
+      // 用于接收计算后，每个区块的滚动的累计高度；
+      scrollHeightNow: 0,
+      ScrollIndexNowIndex: 0,
+      // 存放单个商品数据，用于渲染商品详情
+      currentGoodsInfo: {},
+      // 控制商品详情页显示与隐藏；
+      goodsInfoShow: false
     };
+  },
+  // 接收商家信息, 商家购物车的数据
+  props: ["sellerInfo", "getSellerCart"],
+  created() {
+    // 通过ajax拿到数据，因为此时与这个组件相关的组件都没有拿到数据，所以由这个组件自己拿数据；
+    this.getgoodsData();
+  },
+  mounted() {
+    // 生命周期函数，在DOM树生成后执行；
+    // 调用初始化滚动插件的函数；
+    this.scrollInit();
+  },
+  updated() {
+    // 生命周期函数，实例更新完毕之后调用此函数，此时 data 中的状态值 和 界面上显示的数据，都已经完成了更新，界面已经被重新渲染好了！
+    // 此时的页面已经渲染完毕，这时候才能拿到DOM元素，进行操作；
+    // 调用获取右侧 每个 商品分类及该类商品的高度的函数；
+    this.getGoodsListHeight();
+
+    this.getRightScrollPosition();
+  },
+  computed: {
+    // 监听计算属性，当这个函数下的某个数据发生变化，则会重新计算、执行这个函数；
+    // 用return的方式返回值；
+
+    // 这里就用来做右侧滚动栏，数值变化时；
+    // 注意！！！！computed 是接收返回值！！！！！
+    WatchScrollIndex: function() {
+      // 这里通过循环计算，
+
+      for (var k = 0; k < this.goodsListHeight.length; k++) {
+        // 这里是用当前循环的每个分类块的高度相加，如果下边的if没有成了，说明已经滚动的值不够高；
+        // 一开始这个值就是第1个区块的高度；
+        // 如果没有进入if，则会一直加下一个分类块的高度；
+        this.scrollHeightNow += this.goodsListHeight[k];
+        // 如果，当前滚动的高度，是否大于第1个分类块的高度 且 小于第2个分类块+第1个块的高度，那么此时就应该让第2个分类块的左侧栏对应的按钮高亮；
+        if (this.scrollHeightNow > this.scrollHeight) {
+          this.scrollHeightNow = 0;
+          return k;
+        }
+      }
+
+      return 0;
+    }
+  },
+  methods: {
+    getgoodsData() {
+      // 因为在main.js中已经引入了vue-resource 所以这里可以直接使用this.$http的方法；
+      this.$http.get("/api/goods").then(goodsResult => {
+        // 判断是否拿到了数据；
+        // 虽然请求成功了，但不一定拿到了数据；
+        if (goodsResult.ok === ERR_OK) {
+          // console.log(goodsResult);
+          this.goodsInfo = goodsResult;
+          this.foodsListMenu = this.goodsInfo.body.data;
+        }
+      });
+    },
+    // 处理左侧分类项列表的 点击事件，获取传进来每个分类对应的索引值；
+    foodslistNow(index) {
+      // 方法1：
+      //此时拿到了被点击的分类项的索引值，那么就可以用这个索引值，用作右侧列表高度的数组循环相加；
+      // 每次被点击的时候都将这个暂存自定为0；
+      var numHeight = 0;
+      for (var i = 0; i < index; i++) {
+        numHeight += this.goodsListHeight[i];
+      }
+      // 滚动到指定位置的API，参数：x位置, y位置 , 时间, 曲线；
+      this.scrollRight.scrollTo(0, -numHeight, 400);
+      // 这里就先不用方法2，因为还要获取DOM元素，获取每个分类项，可能会增加内存计算，所以直接用方法1，操作右侧整个列表的滚动位置即可；
+
+      // 方法2：
+      // 也可以用另一个API，就是将滚动定为到某个一元素的位置；
+      // 首先获取当右侧列表的每个分类项，得到的还是HTMLCollection的对象;
+      // let foodsListNow = this.$refs.contwrapper.getElementsByClassName('food-link-hook');
+      // this.scrollRight.scrollToElement(foodsListNow[i], 400);
+    },
+    scrollInit() {
+      // 初始化滚动插件；
+      // 在methods中初始化了之后，别忘了在mounted中调用这个初始化函数；
+      let wrapperLeft = document.querySelector(".better-scroll-wrapper-left");
+      let wrapperRight = document.querySelector(".better-scroll-wrapper-right");
+      // better-scroll的实例对象，提供一个API，能够实时监听这个组件的滚动位置,创建实例的时候，后边传入probeType: 3;
+      // 然后这个实例化对象，就能监听滚动事件，其中的xx就能拿到实时滚动的位置了；
+      // 左侧列表因为需要点击，但是better-scroll会默认禁止点击事件，那么在配置的时候加上click:true即可；
+      this.scrollLeft = new BScroll(wrapperLeft, { click: true });
+      this.scrollRight = new BScroll(wrapperRight, {
+        probeType: 3,
+        click: true
+      });
+    },
+    getGoodsListHeight() {
+      // $els类似于document.querySelector('.class')的功能,可以拿到指定的dom元素。
+      let foodsList = this.$refs.contwrapper.getElementsByClassName(
+        "food-link-hook"
+      );
+      // 此时拿到的是一个HTMLCollection的对象，类似数组，但是用[]方法拿不到元素；
+      // 而且这个HTMLCollection对象是事实变化的，所以只能通过updated这个生命周期函数拿到这个元素；
+      // 这个对象下有个.item能够拿到每个元素；
+      for (var i = 0; i < foodsList.length; i++) {
+        // 此时只能通过每个DOM元素下的clientHeight方法拿到这个元素的实际高度；
+        // console.dir(foodsList.item(i).clientHeight)
+        // 让后将每个分类项的高度赋值给定义好的数组中；
+        this.goodsListHeight.push(foodsList.item(i).clientHeight);
+      }
+    },
+    // 封装一个使用 better-scroll 插件的实例对象来获取该滚动元素实时位置的函数
+    getRightScrollPosition() {
+      this.scrollRight.on("scroll", pos => {
+        // 在初始化 better-scroll 实例时传入{probeType: 3;}，
+        // 然后这个函数的实例对象监听滚动事件，回调函数的第一个参数，拿到的就是该元素滚动的实时位置；
+        // console.log(pos)
+
+        // 然后将这个实时滚动位置赋值给data下定义好的用于接收的变量,用abs转成绝对值，也就是正数；
+        this.scrollHeight = Math.abs(pos.y);
+        // 然后就可以用按到的每个分类的高度做对比，就能知道每个分类的块，滚动时，有没有超过显示区域了；
+        // 比如：↓↓↓
+        // this.goodsListHeight[0] 这是已经拿到的第一个分类‘热销榜’以及该分类下的商品的所有合起来的高度；
+        // if(this.scrollHeight > this.goodsListHeight[0]){
+        //     // 能够进入这个if，说明滚动位置还没有超过这个分类块的高度，那么此时就应该将这个区块对应的左侧的分类块高亮起来；
+        // }
+
+        // 因为涉及到了属性的计算，所以，就用到了VUE的计算属性：computed
+        // 注意，是接收返回值，所以结算结果是computed左边的'变量名'；
+
+        // 这里重新赋值给另外一个变量，因为JK在引用computed中的某个返回值的变量时，就会卡死；
+        // 所以只能讲 computed下的WatchScrollIndex接收到的返回值，再赋值给另外一个变量，然后用于和左侧列表的索引对对比，从而产生形成高亮；
+        this.ScrollIndexNowIndex = this.WatchScrollIndex;
+      });
+    },
+    // 获取减号DOM，将这个函数传给加减号子组件，然后加减号调用时把DOM元素当做参数
+    getAddDom(el) {
+      // 当点击加号的时候，此时获取了el，也就是加号的元素
+      // 然后再嗲用子组件的方法，将加号DOM传给子组件，
+      // 此时，购物车子组件获取到了加号按钮DOM
+      // 利用this.$ref.xx也能够拿到组件，和获取DOM一样
+      this.$refs.ShopVM.showBall(el);
+    },
+    // 展开商品详情页；
+    showGoodsInfo(goodsData) {
+      this.currentGoodsInfo = goodsData;
+      // 点击每个商品的时候，获取该商品的数据，然后赋值给一个VM的变量，
+      // 然后商品详情页就可以用这个变量接收到的数据，进行渲染了
+      // console.log(this.currentGoodsInfo);
+      // console.log(this.sellerInfo.name)
+      // 而且还要将商品详情显示与隐藏的标识符设置为true
+      this.goodsInfoShow = true;
+    }
+  },
+  components: {
+    // 挂载购物车组件；
+    shopcart,
+    // 挂载加减号组件；
+    addgoods,
+    // 挂载商品详情页组件；
+    goodsinfo
+  }
+};
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
@@ -385,6 +451,13 @@
                                         text-decoration: line-through;
                                         font-size: 10px;
                                         color: #93999f;
+// 商品详情显示与隐藏动画；
+// 入场前 & 退场后
+.goodsinfo-enter, .goodsinfo-leave-to
+    transform: translate3d(100%, 0, 0);
 
 
+// 入场后 & 退场前
+.goodsinfoto, .goodsinfo-leave
+    transform: translate3d(0, 0, 0);
 </style>

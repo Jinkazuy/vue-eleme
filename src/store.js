@@ -18,14 +18,18 @@ export default new Vuex.Store({
     // 注意： 如果组件想要调用 mutations 中的方法，只能使用 this.$store.commit('方法名')
     // 这种 调用 mutations 方法的格式，和 this.$emit('父组件中方法名')类似
     mutations: {
-        // 获取数据库中数据；
+        // 获取数据库中,该用户数据下，所有商家的所有购物车数据；
         // 这里是获取用户购物车数据的，但是没有接口，所以就从本地存储模拟一下
+        // 在每次操作数据的时候，都应该调用这个方法，重新获取数据库中的数据；
         getUserCart(state) {
+            // 发送ajax请求，获取该用户数据的购物车数据；
             // 调用这个函数的时机，是已进入应用的时候就调用，所以这个函数在APP.vue中调用了；
             // 如果没有数据就还是等于空数组；
             state.cartAll = JSON.parse(localStorage.getItem('UserCart') || '[]')
-            console.dir(state.cartAll)
+            console.log('请求数据')
+            console.dir(state.cartAll);
         },
+
         // 增加商品逻辑；
         // 注意： mutations 的 函数参数列表中，最多支持两个参数，其中，
         // 参数1：是 state ；
@@ -115,7 +119,7 @@ export default new Vuex.Store({
 
                                 // 删除过后，检查该商家下是否还有商品，如果没有就删除这个商家；
                                 if(state.cartAll[i].goods.length===0){
-                                    console.log("商家下没有任何商品");
+                                    // console.log("商家下没有任何商品");
                                     // 商家下没有任何商品，删除这个商家；
                                     state.cartAll.splice(i,1);
                                 }
@@ -166,7 +170,7 @@ export default new Vuex.Store({
         getAllcart: function (state) {
             // 在使用插值引用的时候就可以直接用这个接收返回值的变量，和VM的计算属性有点相似
             // {{ $store.getters.getAllcart }}
-            return state.cartAll
+            return state.cartAll;
         }
     }
 });

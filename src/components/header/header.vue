@@ -19,7 +19,10 @@
         <!--<span v-text="sellerInfo.deliveryTime">这里的内容会被v-text替换掉</span>-->
         <!--<span>分钟送达</span>-->
         <!--其实可以写成:↓， 上边的方式识别起来更加方便，但是徒增代码量；-->
-        <span>{{ sellerInfo.description }}&nbsp;/&nbsp;{{sellerInfo.deliveryTime}}分钟送达</span
+        <span
+          >{{ sellerInfo.description }}&nbsp;/&nbsp;{{
+            sellerInfo.deliveryTime
+          }}分钟送达</span
         >
       </li>
       <!--这里是判断优惠信息是否存在，如果不存在就是空数组-->
@@ -55,7 +58,12 @@
     <div class="bgBlur">
       <img :src="sellerInfo.avatar" />
     </div>
-    <detail @detailShow="detailShow" :tsShow="toastShow" :sellerInfo="sellerInfo"></detail>
+    <detail
+      @detailShow="detailShow"
+      :tsShow="toastShow"
+      :sellerInfo="sellerInfo"
+    ></detail>
+    <div v-show="0">{{ sellerInfo }}</div>
   </div>
 </template>
 
@@ -63,15 +71,9 @@
 // 引入浮层组件
 import detail from "../detail/detail.vue";
 
-// 这里定义ERR_OK是为了语义化，在拿到数据库返回结果的错误代码时用于判断；
-// 其实加不加都可以，加上的话，看到ERR_OK就知道是数据库的错误代码为0，语义化更强些；
-const ERR_OK = 0;
-
 export default {
   data() {
     return {
-      // 存放ajax获取到的商家数据
-      sellerInfo: [],
       // 用于标识公告区域是否展开的标识0代表没展开，1代表展开；
       bulletinFlag: 0,
       // 获取优化活动的个数
@@ -84,40 +86,11 @@ export default {
     // 引入浮层组件，如果在这个文件中继续写，加上备注啥的，太多了；
     detail
   },
-  created() {
-    // VM实例的生命周期钩子函数，created钩子函数时候，
-    // 这个VM实例组件的data和methods已经在内存中初始化完成，能够拿data和methods中的数据和方法了；
-    this.getSellerInfo();
-  },
+  created() {},
+  // 拿到父级传过来的商家信息；
+  props: ["sellerInfo"],
+  computed: {},
   methods: {
-    // 获取商家信息
-    getSellerInfo() {
-      // 发ajax请求
-      // 获取商家信息数据的方法，引入main.js中引入了处理ajax第三方包：vue-resource
-      // 所以这里可以直接使用.$http.get来获取轮播图
-      // 通过.then 拿到结果；
-      this.$http.get("/api/seller").then(result => {
-        // console.log(result.body);
-
-        if (result.body.errno === ERR_OK) {
-          // 错误代码为0表示无错误，真是开发中可能会有其他的数字代号，具体的还是看后端返回的内容是什么；
-          // 拿到的数据,放入预先设置好的空数组中，用于循环；
-
-          // 成功了
-          this.sellerInfo = result.body.data;
-          // console.log(this.sellerInfo);
-
-          // 设置商家优惠信息个数,本来可以直接在html标签中写{{sellerInfo.supports.length}}的，而且也会显示个数是5；
-          // 但是控制台会报错 Error in render: "TypeError: Cannot read property 'length' of undefined"
-          this.supportsLength = this.sellerInfo.supports.length;
-        } else {
-          // 获取失败
-          // 因为引入了MintUI的toast组件，这里就可以直接使用Toast(),当然还可以传入很多参数(比如停留时间)，具体的看官网API就行；
-          // Toast("加载轮播图失败。。。");
-          // Toast是mintUI提供的组件，这个项目没用到mintUI，没有引入，所以这里不生效；
-        }
-      });
-    },
     // 点击展开商家详情浮层，通过父子间相互传值实现；
     openDetail() {
       this.toastShow = true;

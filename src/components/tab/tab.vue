@@ -16,13 +16,17 @@
       </div>
     </div>
     <!--路由展示内容-->
-    <router-view></router-view>
+    <!--将商家信息、该商家购物车实时数据 传递给当前的路由组件-->
+    <router-view :sellerInfo="sellerInfo" :getSellerCart="getSellerCart"></router-view>
+
   </div>
 </template>
 
 <script>
 export default {
-  name: "tab.vue"
+  name: "tab.vue",
+  // 接收app.vue传过来的商家信息、该商家下购物车是实时数据
+  props: ["sellerInfo", "getSellerCart"]
 };
 </script>
 
