@@ -18,7 +18,10 @@
     </div>
     <!--路由展示内容-->
     <!--将商家信息、该商家购物车实时数据 传递给当前的路由组件-->
-    <router-view :sellerInfo="sellerInfo" :getSellerCart="getSellerCart" :sellerAllGoods="sellerAllGoods"></router-view>
+    <keep-alive>
+      <router-view :sellerInfo="sellerInfo" :getSellerCart="getSellerCart" :sellerAllGoods="sellerAllGoods"></router-view>
+    </keep-alive>
+
 
   </div>
 </template>
@@ -27,7 +30,15 @@
 export default {
   name: "tab.vue",
   // 接收app.vue传过来的商家信息、该商家下购物车是实时数据
-  props: ["sellerInfo", "getSellerCart", "sellerAllGoods"]
+  props: ["sellerInfo", "getSellerCart", "sellerAllGoods"],
+  meta: {
+      // 因为每次请求不同的router，都会清空DOM，
+      // VUE提供了保持原有DOM的方法:keep-alive，
+      // 这样在切换的时候，就不会重复的发送请求，而是先使用缓存数据，保存DOM当前状态（比如滚动到那个位置之类的）
+      // 但是注意！！ 使用了keep-alive的话，在第二次及以后载入该组件的时候，就不会触发created钩子函数，
+      // 所以如果有些比较重要、需要事实监听的方法，不要放到created钩子中，或者不适用keep-alive方法；
+      keepAlive: true // true 表示需要使用缓存 false表示不需要被缓存
+  }
 };
 </script>
 
