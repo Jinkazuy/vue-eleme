@@ -91,12 +91,12 @@
       </div>
     </div>
     <!--调用底部购物车bar组件，并且把商家的起送费、配送费传进去-->
-    <shopcart :startFreight="1" :freight="1" ref="ShopVM" :getSellerCart="getSellerCart"></shopcart>
+    <shopcart ref="ShopVM" :getSellerCart="getSellerCart"></shopcart>
+
     <!--这里调用商品详情页，布局使用fixed，并且z-index不能高于购物车组件-->
     <!--当然，还是需要用transition标签包裹，实现缓动效果-->
     <!--把商家名称 和 该商品信息穿进去-->
     <!--还要把处理加号dom的函数传给这个详情页，然后详情页获取加号dom后，再调用这个父级的getAddDom，把加号DOM传给父级，就等于是一个中间传递的方法-->
-
     <transition name="goodsinfo">
       <goodsinfo
         v-show="goodsInfoShow"
@@ -104,6 +104,7 @@
         :goodsInfoSellerName="sellerInfo.name"
         @getAddDom="getAddDom"
         :getSellerCart="getSellerCart"
+        @closeInfo="closeInfo"
       ></goodsinfo>
     </transition>
   </div>
@@ -284,6 +285,10 @@ export default {
       // console.log(this.sellerInfo.name)
       // 而且还要将商品详情显示与隐藏的标识符设置为true
       this.goodsInfoShow = true;
+    },
+      // 关闭商品详情页
+    closeInfo() {
+      this.goodsInfoShow = false;
     }
   },
   components: {

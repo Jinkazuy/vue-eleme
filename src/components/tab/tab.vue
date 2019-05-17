@@ -9,15 +9,16 @@
         <router-link to="/goods" tag="div">商品</router-link>
       </div>
       <div class="tab-item">
+        <!--这里写反了-->
         <router-link to="/seller" tag="div">评论</router-link>
       </div>
       <div class="tab-item">
-        <router-link to="/ratings" tag="div">商家</router-link>
+        <router-link to="/sellerpage" tag="div">商家</router-link>
       </div>
     </div>
     <!--路由展示内容-->
     <!--将商家信息、该商家购物车实时数据 传递给当前的路由组件-->
-    <router-view :sellerInfo="sellerInfo" :getSellerCart="getSellerCart"></router-view>
+    <router-view :sellerInfo="sellerInfo" :getSellerCart="getSellerCart" :sellerAllGoods="sellerAllGoods"></router-view>
 
   </div>
 </template>
@@ -26,7 +27,7 @@
 export default {
   name: "tab.vue",
   // 接收app.vue传过来的商家信息、该商家下购物车是实时数据
-  props: ["sellerInfo", "getSellerCart"]
+  props: ["sellerInfo", "getSellerCart", "sellerAllGoods"]
 };
 </script>
 
@@ -44,6 +45,7 @@ export default {
 #tab
   height: 40px;
   width: 100%;
+  background-color: #fff;
 
   // 承载商品、评论、商家 按钮 的父级元素；
   .bar

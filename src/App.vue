@@ -4,7 +4,7 @@
     <!--将商家信息传给头部-->
     <myHeader :sellerInfo="sellerInfo"></myHeader>
     <!--将商家信息、该商家下购物车实时的所有数据 传给tab组件-->
-    <myTab :sellerInfo="sellerInfo" :getSellerCart="getSellerCart"></myTab>
+    <myTab :sellerInfo="sellerInfo" :getSellerCart="getSellerCart" :sellerAllGoods="goodsInfo"></myTab>
   </div>
 
 </template>
@@ -22,7 +22,8 @@ const ERR_OK = true;
 export default {
   data() {
     return {
-      sellerInfo: {}
+      sellerInfo: {},
+      goodsInfo: {},
     };
   },
   components: {
@@ -37,9 +38,20 @@ export default {
     this.$http.get("/api/seller").then(sellerResult => {
       if (sellerResult.ok === ERR_OK) {
         this.sellerInfo = sellerResult.body.data;
+        console.log("商家数据 ↓↓↓");
         console.log(this.sellerInfo);
       }
     });
+
+    // 这里获取所以商品数据
+    this.$http.get("/api/goods").then(sellerResult => {
+        if (sellerResult.ok === ERR_OK) {
+            this.goodsInfo = sellerResult.body.data;
+            console.log("全部商品 ↓↓↓");
+            console.log(this.goodsInfo);
+        }
+    });
+
   },
   computed: {
     // 实时获取 该用户的购物车数据 的单个商家的购物车数据；

@@ -417,7 +417,7 @@ export default {
     // 计算起送费，不满足起送费，显示差xx元. 大于起送费就显示去结算
     priceDifference: function() {
       // 如果，购物车价格大于0且小于起送价格
-      if (this.totalPrice > this.sellerInfo.minPrice) {
+      if (this.totalPrice >= this.sellerInfo.minPrice) {
         return "去结算";
       } else if (
         this.totalPrice > 0 &&
@@ -431,7 +431,7 @@ export default {
     },
     // 控制结算按钮的类名，如果大于起送费，就返回绿色的类名，否则就是默认的类名；
     payButtonClass: function() {
-      if (this.totalPrice > this.sellerInfo.minPrice) {
+      if (this.totalPrice >= this.sellerInfo.minPrice) {
         return "settlebtn go";
       } else {
         return "settlebtn";
@@ -455,7 +455,6 @@ export default {
     height 48px;
     width: 100%;
     background-color: #fff;
-    z-index: 999;
     // 购物主体内容，宽度自适应
     .cartinfo
         z-index: 999;
@@ -651,8 +650,9 @@ export default {
 
 // 背景模糊
 .carcontbgblur
+    //背景模糊有个bug就是这个元素的父级不能有z-index属性；否则会出现只显示一半浮层；
     position: fixed;
-    z-index: 200;
+    z-index: 400;
     // 其实因为是fixed布局，直接设置宽高就行，但这里为了练习，window.innerWidth和window.innerHeight
     // 所以用js获取屏幕宽高在赋值给这个元素的style;
     // width: 100%;

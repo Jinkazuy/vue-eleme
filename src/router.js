@@ -4,8 +4,8 @@ import Router from "vue-router";
 
 // 引入自己的.vue文件；
 import goods from "./components/goods/goods.vue"; // 引入商品信息组件
-import seller from "./components/seller/seller.vue"; // 引入商家信息组件
-import ratings from "./components/ratings/ratings.vue"; // 引入评论信息组件
+import seller from "./components/seller/seller.vue"; // 引入评论信息组件
+import sellerpage from "./components/sellerpage/sellerpage.vue"; // 引入商家信息组件
 
 // 注册router，挂载到VUE下
 Vue.use(Router);
@@ -27,16 +27,16 @@ export default new Router({
       component: goods
     },
     {
-      // 商家信息模块路由
+      // 评论信息模块路由
       path: "/seller",
       name: "seller",
       component: seller
     },
     {
-      // 评论信息模块路由
-      path: "/ratings",
-      name: "ratings",
-      component: ratings
+      // 商家信息模块路由
+      path: "/sellerpage",
+      name: "sellerpage",
+      component: sellerpage
     }
     // { // 设置子集路由，没有的话就不用管了，此处备注不要删；
     //   path: "/about",

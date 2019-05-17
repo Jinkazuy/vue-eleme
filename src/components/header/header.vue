@@ -132,6 +132,7 @@ export default {
   height: 134px;
   width: 100%;
   position: relative;
+  z-index: 10;
   // 背景模糊,因为背景图是通过ajax拿到的img标签图片，然后进行模糊的，所以这里只写样式;
   .bgBlur
     position: absolute;
